@@ -1,15 +1,15 @@
 #!/usr/bin/env bash
-# gerrit-patch-pipeline skill 一键安装/更新脚本（多 agent 目标）
+# gerrit-patch-flow skill 一键安装/更新脚本（多 agent 目标）
 # 用法:
-#   交互选择: curl -fsSL https://gitee.com/GreatBigM/gerrit-patch-pipeline-skill/raw/main/install.sh -o /tmp/install.sh && bash /tmp/install.sh
-#   指定目标: curl -fsSL https://gitee.com/GreatBigM/gerrit-patch-pipeline-skill/raw/main/install.sh | bash -s -- --target hermes,claude
-#   全部目标: curl -fsSL https://gitee.com/GreatBigM/gerrit-patch-pipeline-skill/raw/main/install.sh | bash -s -- --all
+#   交互选择: curl -fsSL https://gitee.com/GreatBigM/gerrit-patch-flow-skill/raw/main/install.sh -o /tmp/install.sh && bash /tmp/install.sh
+#   指定目标: curl -fsSL https://gitee.com/GreatBigM/gerrit-patch-flow-skill/raw/main/install.sh | bash -s -- --target hermes,claude
+#   全部目标: curl -fsSL https://gitee.com/GreatBigM/gerrit-patch-flow-skill/raw/main/install.sh | bash -s -- --all
 # 等价于手动复制，不经过安全扫描。重复执行 = 更新（自动备份旧版 + 版本对比）
-# 镜像: github.com/GreatBigM/gerrit-patch-pipeline-skill（海外备选）
+# 镜像: github.com/GreatBigM/gerrit-patch-flow-skill（海外备选）
 set -euo pipefail
 
-REPO_URL="https://gitee.com/GreatBigM/gerrit-patch-pipeline-skill.git"
-SKILL_NAME="gerrit-patch-pipeline"
+REPO_URL="https://gitee.com/GreatBigM/gerrit-patch-flow-skill.git"
+SKILL_NAME="gerrit-patch-flow"
 COPY_DIRS="templates references scripts"
 
 get_version() { grep -m1 '^version:' "$1" 2>/dev/null | sed 's/^version:[[:space:]]*//' | tr -d '"'\'' ' || true; }
@@ -152,6 +152,6 @@ echo "✅ ${SKILL_NAME} v${NEW_VERSION} 安装完成！"
 echo "   - Hermes: 新会话自动加载，当前会话 /reload-skills 生效"
 echo "   - Claude Code / Codex: 新会话自动加载"
 echo ""
-echo "快速开始：对 AI 说 \"拉 patch\" / \"打 patch\" / \"只推一笔\" 或加载 gerrit-patch-pipeline skill"
+echo "快速开始：对 AI 说 \"拉 patch\" / \"打 patch\" / \"只推一笔\" 或加载 gerrit-patch-flow skill"
 echo "更新：重跑本脚本即升级（自动备份旧版到 .bak.<时间戳>）"
 echo "指定目标：bash install.sh --target hermes,claude  或  --all"

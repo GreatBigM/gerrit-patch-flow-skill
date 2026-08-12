@@ -1,4 +1,4 @@
-# gerrit-patch-pipeline
+# gerrit-patch-flow
 
 Gerrit 端到端流水线 skill — **xml 拉基线 → gerrit patch 合入 → 本地修改 → 只推一笔**。
 
@@ -9,7 +9,7 @@ Gerrit 端到端流水线 skill — **xml 拉基线 → gerrit patch 合入 → 
 ### 方式 1：一键脚本（推荐）
 
 ```bash
-curl -fsSL https://gitee.com/GreatBigM/gerrit-patch-pipeline-skill/raw/main/install.sh | bash
+curl -fsSL https://gitee.com/GreatBigM/gerrit-patch-flow-skill/raw/main/install.sh | bash
 ```
 
 等价于手动复制，不经过安全扫描。重复执行 = 升级（自动备份旧版到 `.bak.<时间戳>`）。
@@ -17,14 +17,14 @@ curl -fsSL https://gitee.com/GreatBigM/gerrit-patch-pipeline-skill/raw/main/inst
 ### 方式 2：手动复制
 
 ```bash
-git clone --depth 1 https://gitee.com/GreatBigM/gerrit-patch-pipeline-skill.git /tmp/gpp-skill
-cp -r /tmp/gpp-skill/references /tmp/gpp-skill/scripts /tmp/gpp-skill/SKILL.md /tmp/gpp-skill/CHANGELOG.md ~/.hermes/skills/gerrit-patch-pipeline/
+git clone --depth 1 https://gitee.com/GreatBigM/gerrit-patch-flow-skill.git /tmp/gpp-skill
+cp -r /tmp/gpp-skill/references /tmp/gpp-skill/scripts /tmp/gpp-skill/SKILL.md /tmp/gpp-skill/CHANGELOG.md ~/.hermes/skills/gerrit-patch-flow/
 ```
 
 ### 方式 3：GitHub 镜像（海外备选）
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/GreatBigM/gerrit-patch-pipeline-skill/main/install.sh | bash
+curl -fsSL https://raw.githubusercontent.com/GreatBigM/gerrit-patch-flow-skill/main/install.sh | bash
 ```
 
 ## 依赖

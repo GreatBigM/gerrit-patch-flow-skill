@@ -1,5 +1,5 @@
 ---
-name: gerrit-patch-pipeline
+name: gerrit-patch-flow
 description: Gerrit 端到端流水线 — xml 拉基线 → patch 合入 → 本地修改 → 只推一笔（方案C 保持hash）
 version: 1.0.0
 category: devops
