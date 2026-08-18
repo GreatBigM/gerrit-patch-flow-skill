@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## v1.1.0 (2026-08-18)
+
+- **ZCode 安装目标**：install.sh 支持 ZCode（探测 `~/.zcode` → 安装到 `~/.zcode/skills/gerrit-patch-flow`），README 补手动复制 ZCode 路径，发布页一键命令即可装到 ZCode
+
 ## v1.0.0 (2026-08-12)
 
 - 初版：Gerrit 端到端流水线（xml 拉基线 → patch 合入 → 本地修改 → 只推一笔）

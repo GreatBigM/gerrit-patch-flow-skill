@@ -18,7 +18,8 @@ curl -fsSL https://gitee.com/GreatBigM/gerrit-patch-flow-skill/raw/main/install.
 
 ```bash
 git clone --depth 1 https://gitee.com/GreatBigM/gerrit-patch-flow-skill.git /tmp/gpp-skill
-cp -r /tmp/gpp-skill/references /tmp/gpp-skill/scripts /tmp/gpp-skill/SKILL.md /tmp/gpp-skill/CHANGELOG.md ~/.hermes/skills/gerrit-patch-flow/
+cp -r /tmp/gpp-skill/references /tmp/gpp-skill/scripts /tmp/gpp-skill/SKILL.md /tmp/gpp-skill/CHANGELOG.md ~/.hermes/skills/gerrit-patch-flow/   # Hermes
+cp -r /tmp/gpp-skill/references /tmp/gpp-skill/scripts /tmp/gpp-skill/SKILL.md /tmp/gpp-skill/CHANGELOG.md ~/.zcode/skills/gerrit-patch-flow/   # ZCode
 ```
 
 ### 方式 3：GitHub 镜像（海外备选）
