@@ -1,7 +1,7 @@
 ---
 name: gerrit-patch-flow
 description: Gerrit 端到端流水线 — xml 拉基线 → patch 合入 → 本地修改 → 只推一笔（方案C 保持hash）
-version: 1.1.0
+version: 1.2.0
 category: devops
 metadata:
   agent:
@@ -11,7 +11,7 @@ metadata:
 # Gerrit 端到端流水线
 
 从零到推一笔的完整链路：**xml 拉基线 → gerrit patch 合入 → 本地修改 → 只推一笔**。
-本 skill 是场景流水线（操作顺序）；通用操作细节（commit 格式/amend/具体坑）见 `gerrit-workflow` skill。
+本 skill 是场景流水线（操作顺序）；通用操作细节（commit 格式/amend/具体坑）见下方「高频坑速查」与 `references/`。
 
 ## 角色边界（铁律）
 
@@ -24,7 +24,7 @@ metadata:
 ### Step 1: xml 拉基线
 
 ```bash
-# 1.1 从 Jenkins 链接/xml 版本号拿 manifest 名（链接解析见 gerrit-workflow references/jenkins-link-parsing.md）
+# 1.1 从 Jenkins 链接/xml 版本号拿 manifest 名（链接 URL 中 query 参数或 xml 内容里取 manifest 名）
 # 1.2 repo init（真相源 = 各项目 project.conf；hm6502 系用 manifest-smart.xml）
 repo init -u ssh://<gerrit_host>/manifest -b smart -m <manifest_xml>
 
@@ -94,7 +94,7 @@ cd <repo_root>/<subrepo> && repo upload --yes .
 - [ ] 推送前 commit message 格式逐 commit 检查
 - [ ] 工作区干净（`git status --porcelain` 无 tracked 改动）
 
-## 高频坑速查（详细见 gerrit-workflow skill）
+## 高频坑速查
 
 | 坑 | 现象 | 解法 |
 |----|------|------|

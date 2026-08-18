@@ -55,4 +55,4 @@ curl -fsSL https://raw.githubusercontent.com/GreatBigM/gerrit-patch-flow-skill/m
 
 ## 相关
 
-- `gerrit-workflow` skill（通用 gerrit 操作手册：commit 格式/amend/坑）——本 skill 为场景流水线，两者配合使用
+- 通用 gerrit 操作细节（commit 格式/amend/坑）已内嵌本 skill「高频坑速查」与 `references/`——本 skill 自包含，不依赖外部技能
