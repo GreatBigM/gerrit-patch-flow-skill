@@ -4,7 +4,7 @@ description: Gerrit 端到端流水线 — xml 拉基线 → patch 合入 → �
 version: 1.1.0
 category: devops
 metadata:
-  hermes:
+  agent:
     triggers: [拉patch, 打patch, 推patch, gerrit流水线, 只推一笔, 合入change, xml拉代码]
 ---
 
