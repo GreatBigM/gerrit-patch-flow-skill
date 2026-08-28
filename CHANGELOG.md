@@ -20,3 +20,10 @@
 - Change-Id 规则卡（I+40hex、匹配机制表、amend 保留原 ID）
 - 辅助脚本：gerrit_query.py（批量查 revision/parent）、verify_chain.py（链对齐验证）
 - 来源：2026-08-10~12 多轮实证（17→24 change 重打、213266 ps2→ps5、213307 rebase）
+
+## 1.2.1 (2026-08-28)
+
+### Added
+
+- install.sh 新增 pi 安装目标（探测 `~/.pi/agent` → 安装到 `~/.pi/agent/skills/<skill>`，pi 自动发现）
+- 版本 1.2.0 → 1.2.1
