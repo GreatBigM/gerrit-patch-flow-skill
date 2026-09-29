@@ -1,7 +1,7 @@
 ---
 name: gerrit-patch-flow
 description: Gerrit 端到端流水线 — xml 拉基线 → patch 合入 → 本地修改 → 只推一笔（方案C 保持hash）
-version: 1.2.1
+version: 1.2.2
 category: devops
 metadata:
   agent:
@@ -104,6 +104,13 @@ cd <repo_root>/<subrepo> && repo upload --yes .
 | 遍历 kfree 错对象 | list 循环 free 新分配对象 | 审查 kfree 对象 = 遍历变量 |
 | 批量漏打 | 中间冲突后静默跳过后续 change | 逐个核对 commit 数 + 特征 grep |
 | repo upload 推整链 | 分支选择编辑器弹窗/旧分支默认选中 | `repo upload --br=<分支名>` 显式指定 |
+| repo upload 报 `urlopen error ... Connection timed out` | `[FAILED] <proj> (<review_url>/: <urlopen error [Errno 110]>)`，SSH 却明明能通 | review URL 的 HTTP `ssh_info` 是 Python urllib 发的，**只认 `http_proxy`、不读 ~/.ssh/config**。内网必须借道：`proxyon` 后上传；或 `REPO_HOST_PORT_INFO="<host> 29418" repo upload -y .` 直接跳过该探测（勿用 `REPO_IGNORE_SSH_INFO=1`，会把推送退回 http） |
+
+## 上传前置检查（本机=Ubuntu 哑客户端）
+
+1. `ssh -p 29418 <user>@<gerrit> gerrit query --format=JSON change:<Change-Id>` → rowCount=0 说明该笔**还没上去**（正常）
+2. SSH 能通 ≠ upload 能通：urllib 的 HTTP 探测不走 ssh_config（见上表）
+3. 想先验证不真推：`repo upload -n -y --br=<分支> .`（dry-run，实测不落 change）
 
 ## 支持文件
 

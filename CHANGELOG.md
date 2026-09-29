@@ -1,5 +1,13 @@
 # CHANGELOG
 
+## v1.2.2 (2026-09-29)
+
+### Added
+
+- 高频坑速查新增一条：`repo upload` 报 `urlopen error ... Connection timed out` —— review URL 的 HTTP `ssh_info` 探测由 Python urllib 发出，只认 `http_proxy`、不读 `~/.ssh/config`；内网（Ubuntu 哑客户端）必须借道，解 = `proxyon` 或 `REPO_HOST_PORT_INFO="<host> 29418"`（勿用 `REPO_IGNORE_SSH_INFO=1`）
+- 新增「上传前置检查」小节：Change-Id 是否已在云端（rowCount 判据）、SSH 通 ≠ upload 通、`repo upload -n -y` dry-run 可先验不落 change
+- 版本 1.2.1 → 1.2.2
+
 ## v1.2.0 (2026-08-18)
 
 ### Fixed（自包含化）
