@@ -1,5 +1,16 @@
 # CHANGELOG
 
+## v1.2.3 (2026-09-30)
+
+### Added（回灌本机 Hermes 副本的 09-30 实测）
+
+- **review URL 判定四分支源码实证**（`<repo_root>/.repo/repo/git_config.py` 的 `ReviewUrl()`）：`REVIEW_CACHE` → `REPO_HOST_PORT_INFO` env → review URL scheme 为 `sso:`/`ssh:`（直接采信、**零探测**）→ `REPO_IGNORE_SSH_INFO`（退回 http，**禁用**）→ 兜底才 `GET <review>/ssh_info`；只有 `project.py` 的 `UploadForReview` 调用它 ⇒ **只有 `repo upload` 需要这层封装**，`repo init`/`repo sync` 只碰 fetch URL（天然走 ssh_config 的 ProxyCommand）
+- **推荐封装 `repo-vpn`**（一行函数、通用透传：`REPO_HOST_PORT_INFO` 跳探测 + `http_proxy` 覆盖其它 HTTP 腿）：参数原样透传，`repo-vpn sync` / `repo-vpn upload -y .` 均可用；⚠ **勿设 `all_proxy`**（urllib 不支持 socks，会把 http 请求一起带崩）；借道属临时状态时只做这种可整段删的最小封装
+- **「`git status -sb` 显示 behind origin/<分支> N」是设计内的**（本流水线基于 manifest 锁定 revision 提交），判 base 对不对只看「该 revision 是否等于 manifest 当前锁定值」；**上传通道验证不留痕**：真推一笔 → Gerrit Abandon → 本地回退（比 `repo upload -n` 更彻底）
+- **反例**：`local_manifests` 把 manifest 的 `review` 改成 `ssh://` 求「根治探测」→ repo 明确拒绝（`fatal: remote origin already exists with different attributes`），且该文件在时**所有 repo 子命令一起挂**（`repo manifest`/`repo sync` 都报错），只能改团队 manifest
+- 复现该探测**必须独立进程**：`urllib.request` 的全局 opener 首次调用即快照代理，同进程内改 env 无效（会得到「配了代理也不通」的假结论）→ 用 `env http_proxy=<proxy> python3 -c ...`
+- 版本 1.2.2 → 1.2.3
+
 ## v1.2.2 (2026-09-29)
 
 ### Added
