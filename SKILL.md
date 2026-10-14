@@ -25,7 +25,7 @@ metadata:
 
 ```bash
 # 1.1 从 Jenkins 链接/xml 版本号拿 manifest 名（链接 URL 中 query 参数或 xml 内容里取 manifest 名）
-# 1.2 repo init（真相源 = 各项目 project.conf；hm6502 系用 manifest-smart.xml）
+# 1.2 repo init（真相源 = 各项目 project.conf；<项目A> 系用 manifest-smart.xml）
 repo init -u ssh://<gerrit_host>/manifest -b smart -m <manifest_xml>
 
 # 1.3 对齐基线三步（丢弃本地 commit/修改/产物，100% 回 manifest 锁定 revision）
