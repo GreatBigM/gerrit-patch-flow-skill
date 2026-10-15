@@ -1,7 +1,7 @@
 ---
 name: gerrit-patch-flow
 description: Gerrit 端到端流水线 — xml 拉基线 → patch 合入 → 本地修改 → 只推一笔（方案C 保持hash）
-version: 1.2.6
+version: 1.2.7
 category: devops
 metadata:
   agent:
