@@ -52,6 +52,8 @@ curl -fsSL https://raw.githubusercontent.com/GreatBigM/gerrit-patch-flow-skill/m
 - `references/change-id-rules.md` — Change-Id 规则与 gerrit 匹配机制
 - `scripts/gerrit_query.py` — 批量查 change 最新 revision/parent
 - `scripts/verify_chain.py` — 本地链与云端对齐验证
+- `scripts/publish-check.py` — 发布前脱敏闸门（仅维护者用，随 `scripts/` 一并安装）
+- `scripts/hooks/pre-push` — 推送前闸门（`core.hooksPath` 启用）
 - `CHANGELOG.md` — 版本历史
 
 ## 相关

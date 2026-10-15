@@ -55,4 +55,4 @@ git log -1 --format='%b' HEAD | grep Change-Id   # Change-Id 仍是原 change = 
 
 ## 备选（单次）
 
-`git push origin <sha>:refs/for/m/smart` 只推指定 commit（repo upload 粒度是整个 HEAD 链，git push 可指定 sha；前提 parent 已在云端）。
+`git push origin <sha>:refs/for/<branch>` 只推指定 commit（repo upload 粒度是整个 HEAD 链，git push 可指定 sha；前提 parent 已在云端）。

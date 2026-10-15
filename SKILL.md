@@ -1,7 +1,7 @@
 ---
 name: gerrit-patch-flow
 description: Gerrit 端到端流水线 — xml 拉基线 → patch 合入 → 本地修改 → 只推一笔（方案C 保持hash）
-version: 1.2.4
+version: 1.2.6
 category: devops
 metadata:
   agent:
@@ -9,6 +9,8 @@ metadata:
 ---
 
 # Gerrit 端到端流水线
+
+> 用户指挥 AI，AI 替用户执行。给意图就干不反问：说"拉 patch / 打 patch / 只推一笔"即按四步流水线执行；推送动作仍按下方「角色边界」由用户执行。
 
 从零到推一笔的完整链路：**xml 拉基线 → gerrit patch 合入 → 本地修改 → 只推一笔**。
 本 skill 是场景流水线（操作顺序）；通用操作细节（commit 格式/amend/具体坑）见下方「高频坑速查」与 `references/`。
@@ -25,8 +27,8 @@ metadata:
 
 ```bash
 # 1.1 从 Jenkins 链接/xml 版本号拿 manifest 名（链接 URL 中 query 参数或 xml 内容里取 manifest 名）
-# 1.2 repo init（真相源 = 各项目 project.conf；<项目A> 系用 manifest-smart.xml）
-repo init -u ssh://<gerrit_host>/manifest -b smart -m <manifest_xml>
+# 1.2 repo init（真相源 = 各项目 project.conf；<项目A> 系用 manifest-<分支>.xml）
+repo init -u ssh://<gerrit_host>/manifest -b <manifest_branch> -m <manifest_xml>
 
 # 1.3 对齐基线三步（丢弃本地 commit/修改/产物，100% 回 manifest 锁定 revision）
 repo sync -l -d -f                       # 丢本地 commit（输出 discarding N commits）
@@ -34,7 +36,7 @@ repo forall -c 'git reset --hard'        # 清 tracked 修改
 # 验证：python 解析 manifest revision vs 各仓 HEAD，mismatch=0
 ```
 
-**⚠️ `git status -sb` 显示 `behind origin/m/smart N` 是设计内的，不是故障**：本流水线就是「基于 manifest 锁定 revision 提交」，
+**⚠️ `git status -sb` 显示 `behind origin/<manifest_branch> N` 是设计内的，不是故障**：本流水线就是「基于 manifest 锁定 revision 提交」，
   所以本地分支停在 manifest 锁定值、落后分支 tip 几十笔都属正常（Gerrit 侧 change 的 parent 就是这个锁定 revision）。
    判 base 对不对只看一点：**该 revision 是否仍等于当前 manifest 给这个 project 锁定的值**（不是看 behind 计数）。
   **上传通道验证不留痕**：真推一笔 → Gerrit 上 Abandon → 本地回退到基线（比 `repo upload -n` 更彻底，`-n` 只是 `git push --dry-run`）。
@@ -87,7 +89,7 @@ git log -1 --format='%b' HEAD | grep Change-Id   # 验证 Change-Id 仍是原 ch
 
 # 4.4 推送（用户执行）——只更新目标 change，其余链上 commit 云端已识别跳过
 cd <repo_root>/<subrepo> && repo upload --yes .
-# 或：git push origin HEAD:refs/for/m/smart
+# 或：git push origin HEAD:refs/for/<branch>
 ```
 
 ## 验证清单
@@ -109,9 +111,9 @@ cd <repo_root>/<subrepo> && repo upload --yes .
 | 遍历 kfree 错对象 | list 循环 free 新分配对象 | 审查 kfree 对象 = 遍历变量 |
 | 批量漏打 | 中间冲突后静默跳过后续 change | 逐个核对 commit 数 + 特征 grep |
 | repo upload 推整链 | 分支选择编辑器弹窗/旧分支默认选中 | `repo upload --br=<分支名>` 显式指定 |
-| repo upload 报 `urlopen error ... Connection timed out` | `[FAILED] <proj> (<review_url>/: <urlopen error [Errno 110]>)`，SSH 却明明能通 | review URL 的 HTTP `ssh_info` 是 Python urllib 发的，**只认 `http_proxy`、不读 ~/.ssh/config**。内网必须借道：`proxyon` 后上传；或 `REPO_HOST_PORT_INFO="<host> 29418" repo upload -y .` 直接跳过该探测（勿用 `REPO_IGNORE_SSH_INFO=1`，会把推送退回 http） |
+| repo upload 报 `urlopen error ... Connection timed out` | `[FAILED] <proj> (<review_url>/: <urlopen error [Errno 110]>)`，SSH 却明明能通 | review URL 的 HTTP `ssh_info` 是 Python urllib 发的，**只认 `http_proxy`、不读 ~/.ssh/config**。内网必须借道：`<proxy-on>`（借道开关）后上传；或 `REPO_HOST_PORT_INFO="<host> 29418" repo upload -y .` 直接跳过该探测（勿用 `REPO_IGNORE_SSH_INFO=1`，会把推送退回 http） |
 
-6. **入口全景（源码实证，`<repo_root>/.repo/repo/git_config.py` 的 `ReviewUrl()`）**：review URL 判定只有四个分支，按顺序
+6. **入口全景（源码实证，`<repo_root>/.repo/repo/git_config.py` 的 `ReviewUrl()`）**：review URL 判定为四条快捷分支 + 兜底 HTTP 探测，按顺序
    `REVIEW_CACHE` → **`REPO_HOST_PORT_INFO` env** → review URL 的 scheme 为 `sso:`/`ssh:`（直接采信，**零探测**）→ `REPO_IGNORE_SSH_INFO`（退回 http，**禁用**）→ 兜底才 `GET <review>/ssh_info`。
    哑客户端（无 http_proxy、无内网通路）只有前两条可用：`http_proxy=<跳板> repo upload .` 或 `REPO_HOST_PORT_INFO="<host> <port>" repo upload .`。
    ⚠️ **不要试图用 local_manifests 把 manifest 的 `review` 改成 `ssh://`**（看似能“根治”掉这次探测）——
@@ -131,7 +133,7 @@ cd <repo_root>/<subrepo> && repo upload --yes .
    `repo init` / `repo sync` 只碰 **fetch URL**（manifest 仓、各工程 remote、launcher 自拉工具均为 `ssh://`）
    ⇒ 天然走 ssh_config 的 ProxyCommand，**无需任何环境变量**（实测不带代理变量 ls-remote 均通）。
    例外：URL 写成 `https://…` 或走 `--smart-sync`/manifest server 这类 HTTP 入口时才需要代理。
-9. Gerrit 上工程名以 manifest 的 `name` 为准（如 `m/smart/test/ostest`）；`git ls-remote ssh://<host>:29418/<name>` 报
+9. Gerrit 上工程名以 manifest 的 `name` 为准（如 `<group>/<subgroup>/<project>`）；`git ls-remote ssh://<host>:29418/<name>` 报
    `project not found` 是路径写错、不是链路故障。
 
 ## 上传前置检查（本机=Ubuntu 哑客户端）
@@ -151,4 +153,6 @@ cd <repo_root>/<subrepo> && repo upload --yes .
 - `references/keep-hash-aligned.md` — 方案 C：保持 hash 一致（2026-08-12 实证）
 - `scripts/gerrit_query.py` — Gerrit change 批量查询（最新 revision + parent + status）
 - `scripts/verify_chain.py` — 校验本地链与云端 revision 对齐（方案 C 校验）
+- `scripts/publish-check.py` — 发布前脱敏闸门（仅维护者用，随 `scripts/` 一并安装）
+- `scripts/hooks/pre-push` — 推送前闸门（`core.hooksPath` 启用）
 - `CHANGELOG.md` — 版本历史
