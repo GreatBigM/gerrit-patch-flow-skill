@@ -1,7 +1,7 @@
 ---
 name: gerrit-patch-flow
 description: Gerrit 端到端流水线 — xml 拉基线 → patch 合入 → 本地修改 → 只推一笔（方案C 保持hash）
-version: 1.2.7
+version: 1.2.9
 category: devops
 metadata:
   agent:
@@ -146,6 +146,15 @@ cd <repo_root>/<subrepo> && repo upload --yes .
 5. 复现/验证这个探测<b>必须用独立进程</b>：`urllib.request` 的全局 opener 会被首次调用缓存（`ProxyHandler` 在 build 时快照代理），
    同进程内先无代理跑一次再 export http_proxy，第二次仍走旧的 no-proxy opener ⇒ 会得到「配了代理也不通」的假结论。
    正确姿势：`env http_proxy=<proxy> python3 -c "import urllib.request; ..."`，一次进程一个配置。
+
+## 闭环判据与查询通道（2026-11-15 定）
+
+- **闭环判据 = 本地 commit**（用户定）：不是所有代码 change 都能上 gerrit。判断「有没有没做完的活」看本地分支有没有 commit 兜底
+  （`git -C <repo> rev-list --count origin/m/smart..HEAD`），不看是否推上 Gerrit；Gerrit 上的 open CL 属发布流程债，不计入闭环缺口。
+- **匿名 REST 查不到任何 change**：`http://<gerrit>/r/changes/<id>` 与 `?q=project:...` 对未登录一律 `Not found` / `[]`，
+  别据此判「change 不存在」。唯一通道是 `ssh -p 29418 <user>@<gerrit> gerrit query --format=JSON <条件>`；
+  批量取状态用 `--all-approvals --current-patch-set`，取评审意见用 `--comments`。
+- 对别人的 CL 有结论就要回帖：结论只写在知识库/会话里、Gerrit 上零票零评论 = 该评审实际未闭环。
 
 ## 支持文件
 

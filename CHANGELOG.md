@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.2.9 (2026-11-15)
+
+### Added
+- 新增「闭环判据与查询通道」节：闭环判据 = 本地 commit（Gerrit open CL 不算缺口）；匿名 REST 查 change 一律 Not found，
+  唯一通道是 `ssh -p 29418 … gerrit query`（`--all-approvals --current-patch-set` / `--comments`）；对他人 CL 有结论必须回帖。
+
+- 版本 1.2.8 → 1.2.9
+
 ## 1.2.7 (2026-10-15)
 
 ### Changed
